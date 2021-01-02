@@ -1,3 +1,4 @@
+using System;
 using Flunt.Notifications;
 using PlaylistRecommender.Domain.Commands;
 using PlaylistRecommender.Domain.Core;
@@ -11,24 +12,32 @@ namespace PlaylistRecommender.Domain.Handlers
         Notifiable,
         IHandler<PlaylistRecommendationCommand>
     {
-        private readonly WeatherMapsProvider _weatherMapsProvider = new WeatherMapsProvider(); 
         public ICommandResult Handle(PlaylistRecommendationCommand command)
         {
-            command.Validate();
-
-            if(command.Invalid)
+            try
             {
-                AddNotifications(command);
-                return new CommandResult(false, "Não foi possivel obter recomendação de playlist");
+                command.Validate();
+
+                if(command.Invalid)
+                {
+                    AddNotifications(command);
+                    return new CommandResult(false, "Não foi possivel obter recomendação de playlist, verifique as inconsistencias", this.Notifications);
+                }
+
+                var city = new City(command.CityName,
+                           new Coordinates(command.CityLatitude, command.CityLongitude));
+                
+                var weather = WeatherMapsProvider.Instance.GetCityWeather(city).Result;
+                var recommendation = PlaylistProvider.Instance.GetPlaylistRecommedation(weather).Result;
+
+                AddNotifications(city, weather, recommendation);
+
+                return new CommandResult(true, recommendation);
             }
-            var city = new City(command.CityName,
-                       new Coordinates(command.CityLatitude, command.CityLongitude));
-            
-            var weather = this._weatherMapsProvider.GetCityWeather(city).Result;
-
-            AddNotifications(city, weather);
-
-            return new CommandResult(true, "teste");
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

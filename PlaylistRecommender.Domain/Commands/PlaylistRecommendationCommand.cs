@@ -15,10 +15,24 @@ namespace PlaylistRecommender.Domain.Commands
 
         public void Validate()
         {
-            AddNotifications(new Contract()
-              .Requires()
-              .HasMaxLen(CityName, 70, "City.Name", "O nome da cidade não pode ter mais que ")
-            );
+            if(String.IsNullOrEmpty(CityLongitude) &&
+               String.IsNullOrEmpty(CityLatitude))
+            {
+                AddNotifications(new Contract()
+                  .Requires()
+                  .IsNotNullOrEmpty(CityName, "CityName", "É obrigatório informar o nome da cidade.")
+                );
+            }
+            else 
+            {
+                AddNotifications(new Contract()
+                  .Requires()
+                  .IsNotNullOrEmpty(CityLatitude, "CityLatitude", "É obrigatório informar a latitude.")
+                  .IsNotNullOrEmpty(CityLongitude, "CityLongitude", "É obrigatório informar a longitude.")
+                  .IsDigit(CityLatitude, "CityLatitude", "A latitude informada não é valida")
+                  .IsDigit(CityLongitude, "CityLongitude", "A longitude informada não é valida")
+                );
+            }
         }
     }
 }

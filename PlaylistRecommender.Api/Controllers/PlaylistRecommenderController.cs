@@ -21,13 +21,15 @@ namespace PlaylistRecommender.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(string cityName)
+        public IActionResult City(string cityName, string longitude, string latitude)
         {
             try
             {
                 var command = new PlaylistRecommendationCommand() 
                 {
                     CityName = cityName,
+                    CityLongitude = longitude,
+                    CityLatitude = latitude,
                 };
 
                 var result = _handler.Handle(command);
@@ -36,7 +38,7 @@ namespace PlaylistRecommender.Api.Controllers
             }
             catch(Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(500,new CommandResult(false, "Ocorreu um erro ao processar sua requisição, por favor, tente mais tarde."));
             }
         }
     }

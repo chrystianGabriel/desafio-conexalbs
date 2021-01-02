@@ -16,9 +16,7 @@ namespace PlaylistRecommender.Domain.ValueObjects
                 .IsNotNullOrEmpty(Longitude, "Coordinates.Longitude", "Longitude deve ser preenchida")
             );
         }
-
         public string Latitude { get; private set; }
-
         public string Longitude { get; private set; }
     }
 }

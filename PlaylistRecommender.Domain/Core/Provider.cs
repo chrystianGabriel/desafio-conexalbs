@@ -6,35 +6,83 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.WebUtilities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace PlaylistRecommender.Domain.Core
 {
     public abstract class Provider<T> where T : Entity
     {
-        private string _baseUrl { set; get; }
-
-        private HttpClient _httpClient = new HttpClient();
-
         private Dictionary<String, String> _urlParams = new Dictionary<string, string>();
 
-        protected Provider(string baseUrl)
+        private Dictionary<String, String> _headers = new Dictionary<string, string>();
+        private const string DEFAULT_URL_KEY = "BASE_URL";
+        
+        public ProviderConfig ProviderConfig { get; private set; }
+        protected Provider(string providerKey)
         {
-            if(String.IsNullOrEmpty(baseUrl))
-                throw new ArgumentNullException("O provider deve conter um url base"); 
-
-            this._baseUrl = baseUrl;
+            ProviderConfig = ProviderSettings.Instance.GetProviderConfig(providerKey);
         }
-
-        protected async Task<T> Get(string Route)
+        
+        protected async Task<T> SendRequestAndConvertResponse(HttpRequestMessage request)
         {
-            var response = await _httpClient.GetAsync(QueryHelpers.AddQueryString($"{this._baseUrl}/{Route}", this._urlParams));
-            string result = await response.Content.ReadAsStringAsync();
+            return this.ConvertObject(await SendRequest(request));
+        } 
 
-            return JsonConvert.DeserializeObject<T>(result);
+        protected async Task<string> SendRequest(HttpRequestMessage request)
+        {
+            using(var httpClient = new HttpClient())
+            {
+                this.SetHeadersInRequest(ref request);
+
+                var response = await httpClient.SendAsync(request);
+
+                string result = await response.Content.ReadAsStringAsync();
+
+                this.ClearHeaders();
+                this.ClearUrlParams();
+
+                return result;
+            }
+        } 
+
+    
+        protected void AddUrlParams(string key, string value)
+        {
+            if(! _urlParams.ContainsKey(key)) this._urlParams.Add(key, value);
+        }
+        
+        protected void AddHeaders(string key, string value)
+        {
+            if(!_headers.ContainsKey(key)) _headers.Add(key, value);
         }
 
-        protected void AddUrlParams(string key, string value){
-            this._urlParams.Add(key, value);
+        protected string GetUrl(string keyUrl, string keyRoute)
+        {
+            return QueryHelpers.AddQueryString($"{ProviderConfig.GetUrl(keyUrl)}/{ProviderConfig.GetRoute(keyRoute)}", this._urlParams);
         }
+
+        protected string GetUrl(string keyRoute)
+        {
+            return this.GetUrl(DEFAULT_URL_KEY, keyRoute);
+        }
+
+        private void SetHeadersInRequest(ref HttpRequestMessage request) 
+        {
+            foreach(var header in this._headers)
+            {
+                request.Headers.Add(header.Key, header.Value);
+            }
+        }
+
+        private void ClearHeaders()
+        {
+            this._headers.Clear();
+        }
+
+        private void ClearUrlParams()
+        {
+            this._urlParams.Clear();
+        }
+        protected abstract T ConvertObject(string json);
     }
 }

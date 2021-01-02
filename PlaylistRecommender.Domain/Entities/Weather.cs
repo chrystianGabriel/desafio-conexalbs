@@ -4,11 +4,10 @@ namespace PlaylistRecommender.Domain.Entities
 {
     public class Weather : Entity
     {
-        public Weather(float temperature)
+        public Weather(double temperature)
         {
             this.Temperature = temperature;
         }
-
-        public float Temperature { get; private set; }
+        public double Temperature { get; private set; }
     }
 }
