@@ -1,8 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "TzaEjo8r2sqlBpmpzgjOq0Gi9JbgunN5WyyCDzujxN0HtjsW43n1qXSsNzFG53BNoKydiAyNgd1v0NBy8ElxWw==",
+  "dgSpecHash": "fNZAyMU6DGDipKQ3hi+sj62FqzG7uX1j5XlvBnzdrrsO0/IfMFjrm6l2MY+540mGtf4B+mc7qeGp4gOHnrWsjg==",
   "success": true,
   "projectFilePath": "/media/backup/dev/ConexaLabs/PlaylistRecommender/PlaylistRecommender.Api/PlaylistRecommender.Api.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/chrystian/.nuget/packages/flunt/1.0.5/flunt.1.0.5.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/microsoft.aspnetcore.webutilities/2.2.0/microsoft.aspnetcore.webutilities.2.2.0.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/microsoft.extensions.primitives/2.2.0/microsoft.extensions.primitives.2.2.0.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/microsoft.net.http.headers/2.2.0/microsoft.net.http.headers.2.2.0.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/newtonsoft.json/12.0.3/newtonsoft.json.12.0.3.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/system.buffers/4.5.0/system.buffers.4.5.0.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/system.memory/4.5.1/system.memory.4.5.1.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/system.runtime.compilerservices.unsafe/4.5.1/system.runtime.compilerservices.unsafe.4.5.1.nupkg.sha512",
+    "/home/chrystian/.nuget/packages/system.text.encodings.web/4.5.0/system.text.encodings.web.4.5.0.nupkg.sha512"
+  ],
   "logs": []
 }

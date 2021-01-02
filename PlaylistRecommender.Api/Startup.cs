@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PlaylistRecommender.Domain.Handlers;
 
 namespace PlaylistRecommender.Api
 {
@@ -26,6 +27,12 @@ namespace PlaylistRecommender.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddMvc().AddJsonOptions(options => {
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+            });
+
+            services.AddTransient<PlaylistRecommendationHandler, PlaylistRecommendationHandler>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
