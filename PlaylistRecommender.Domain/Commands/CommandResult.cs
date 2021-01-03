@@ -11,7 +11,13 @@ namespace PlaylistRecommender.Domain.Commands
             this.Message = message;
             this.Data = data;
         }
-
+        
+        public CommandResult(bool success, string message)
+        {
+            this.Success = success;
+            this.Message = message;
+        }
+        
         public CommandResult(bool success, object data)
         {
             this.Success = success;

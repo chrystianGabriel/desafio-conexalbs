@@ -11,23 +11,42 @@ using PlaylistRecommender.Domain.Handlers;
 namespace PlaylistRecommender.Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class PlaylistRecommenderController : ControllerBase
+    [Route("api")]
+    public class PlaylistController : ControllerBase
     {
         private readonly PlaylistRecommendationHandler _handler;
 
-        public PlaylistRecommenderController(PlaylistRecommendationHandler handler){
+        public PlaylistController(PlaylistRecommendationHandler handler){
             _handler = handler;
         }
 
-        [HttpGet]
-        public IActionResult City(string cityName, string longitude, string latitude)
+        [HttpGet("city={name}")]
+        public IActionResult Get(string name)
         {
             try
             {
                 var command = new PlaylistRecommendationCommand() 
                 {
-                    CityName = cityName,
+                    CityName = name,
+                };
+
+                var result = _handler.Handle(command);
+
+                return Ok(result);
+            }
+            catch(Exception)
+            {
+                return StatusCode(500,new CommandResult(false, "Ocorreu um erro ao processar sua requisição, por favor, tente mais tarde."));
+            }
+        }
+
+        [HttpGet("latitude={latitude}&longitude={longitude}")]
+        public IActionResult GetWithCoordinates(string longitude, string latitude)
+        {
+            try
+            {
+                var command = new PlaylistRecommendationCommand() 
+                {
                     CityLongitude = longitude,
                     CityLatitude = latitude,
                 };
@@ -36,7 +55,7 @@ namespace PlaylistRecommender.Api.Controllers
 
                 return Ok(result);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return StatusCode(500,new CommandResult(false, "Ocorreu um erro ao processar sua requisição, por favor, tente mais tarde."));
             }

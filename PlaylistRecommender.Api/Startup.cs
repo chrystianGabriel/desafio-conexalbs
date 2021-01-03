@@ -5,6 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PlaylistRecommender.Api.JsonContract;
 using PlaylistRecommender.Domain.Handlers;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
+using PlaylistRecommender.Domain.Commands;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace PlaylistRecommender.Api
 {
@@ -25,15 +30,36 @@ namespace PlaylistRecommender.Api
             });
 
             services.AddTransient<PlaylistRecommendationHandler, PlaylistRecommendationHandler>();
+            services.AddSwaggerGen(c => 
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Playlist Recommender", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            app.Use(async (context, next) => 
             {
-                app.UseDeveloperExceptionPage();
-            }
+                await next();
+                if(context.Response.StatusCode == 404)
+                {
+                    var jsonResult = JsonConvert.SerializeObject(new CommandResult(false, "A rota solicitada nao foi encontrada"),
+                                                                 Newtonsoft.Json.Formatting.None,
+                                                                 new JsonSerializerSettings { 
+                                                                    NullValueHandling = NullValueHandling.Ignore
+                                                                });
+            
+                    var response = Encoding.UTF8.GetBytes(jsonResult);
+                    await context.Response.Body.WriteAsync(response, 0, response.Length);
+                }
+            });
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Playlist Recommender V1"); 
+            });
 
             app.UseHttpsRedirection();
 
