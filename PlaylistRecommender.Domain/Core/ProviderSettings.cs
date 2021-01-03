@@ -26,7 +26,7 @@ namespace PlaylistRecommender.Domain.Core
         {
             try
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "PlaylistRecommender.Domain/providerssettings.json");
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "providerssettings.json");
                 return JsonConvert.DeserializeObject<ProviderSettings>(File.ReadAllText(path.ToString()));
             }
             catch(Exception ex)

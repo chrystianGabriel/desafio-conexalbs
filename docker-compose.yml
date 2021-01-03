@@ -1,0 +1,14 @@
+version: "3"
+services:
+  api:
+    build: .
+    image: aspnetapp
+    ports:
+      - "5001:443"
+      - "5000:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_HTTPS_PORT=5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=1234
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/certs/devcert.pfx
